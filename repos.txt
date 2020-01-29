@@ -10,7 +10,6 @@ Moris Zahtila;https://github.com/mzahtila/agile_phd_school
 Daiga Paršova;https://github.com/daigaparsova/AGILE
 Ewa Grabska;https://github.com/egrabska/tartu_project
 Radek Barvíř;https://github.com/radekbarvir/agile_2019_test
-Veronika Mooses;https://github.com/vmooses/agile_2019
 Jakub Konicek;https://github.com/konija01/agile_test
 Najmeh Mozaffaree Pour;https://github.com/nmp1987/agile_2019_test
 Marketa Beitlova;https://github.com/espesedm7/agile_2019
