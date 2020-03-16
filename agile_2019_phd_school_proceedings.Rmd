@@ -1,0 +1,108 @@
+---
+title: "AGILE 2019 PhD School Proceedings"
+author: "Daniel Nüst"
+date: "`r Sys.time()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Get the repos
+
+```{r paths}
+library("here")
+article_repos <- here::here("article_repos")
+article_pdfs <- here::here("article_pdfs")
+```
+
+To update a specific article, simply delete the corresponding directory from `r article_repos`.
+
+```{r article_repos}
+# read from repos.txt
+library("tibble")
+library("dplyr")
+library("stringr")
+
+articles <- as_tibble(read.csv2(here::here("repos.txt"), comment.char = "#", stringsAsFactors = FALSE)) %>%
+  dplyr::mutate(id = stringr::str_replace_all(.$author, "[;\\.,\\s]", "_")) %>%
+  dplyr::mutate(path = file.path(article_repos, .$id)) %>%
+  arrange(id)
+
+# clone repos
+library("gert")
+
+for (i in 1:nrow(articles)) {
+  repo <- articles[i,]
+  path <- 
+  if(dir.exists(path))
+    next()
+  
+  dir.create(path, showWarnings = FALSE)
+  cat("Cloning for", repo$author, "from", repo$repo, "to", path, "\n")
+  
+  gert::git_clone(url = repo$repo, path = path)
+}
+```
+
+## Create a PDF for each repo
+
+1. identify "main file"
+2. add header to files if missing
+3. ...
+
+```{r rmd_file}
+rmd_file <- function(p) {
+  candidates <- list.files(p, pattern = "\\.Rmd", ignore.case = TRUE)
+  if(length(candidates) > 1) {
+    warning("Found more than one R Markdown file in ", p, "\n\t", toString(candidates), "\n\tUsing: ", candidates[[1]], "\n\n")
+    return(candidates[[1]])
+  }
+  if(length(candidates) < 1) {
+    warning("Found NO R Markdown file in ", p, "\n\n")
+    return(NA)
+  }
+  else {
+    return(candidates)
+  }
+}
+
+articles$rmd_file <- unlist(sapply(articles %>% arrange(id) %>% .$path, rmd_file))
+#articles
+```
+
+```{r knit}
+library("rmarkdown")
+library("rticles")
+dir.create(article_pdfs, showWarnings = FALSE)
+
+template_dir <- tempdir()
+rmarkdown::draft(file.path(template_dir, "article.Rmd"), template = "copernicus_article", package = "rticles", edit = FALSE, create_dir = FALSE)
+list.files(template_dir)
+
+knit_file <- function(article) {
+  output_file <- file.path(article_pdfs, paste0("agile_2019_phd_school_", article$id, ".pdf"))
+  cat("Rendering article", file.path(article$path, article$rmd_file), "to", output_file, "\n")
+  
+  file.copy(file.path(template_dir, c("copernicus.cls",
+                                      "copernicus.bst",
+                                      "copernicus.cfg",
+                                      "pdfscreen.sty",
+                                      "pdfscreencop.sty")), article$path)
+  
+  rmarkdown::render(file.path(article$path, article$rmd_file),
+                    output_format = rticles::copernicus_article(),
+                    output_file = output_file)
+}
+
+knit_file(article = repos[1,])
+# PROBLEM: required header fields are missing
+```
+
+## Metadata
+
+```{r metadata}
+sessionInfo()
+```
+
