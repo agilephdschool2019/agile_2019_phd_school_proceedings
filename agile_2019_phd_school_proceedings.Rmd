@@ -35,13 +35,12 @@ library("gert")
 
 for (i in 1:nrow(articles)) {
   repo <- articles[i,]
-  path <- 
+  path <- repo$path
   if(dir.exists(path))
     next()
   
   dir.create(path, showWarnings = FALSE)
   cat("Cloning for", repo$author, "from", repo$repo, "to", path, "\n")
-  
   gert::git_clone(url = repo$repo, path = path)
 }
 ```
@@ -49,8 +48,8 @@ for (i in 1:nrow(articles)) {
 ## Create a PDF for each repo
 
 1. identify "main file"
-2. add header to files if missing
-3. ...
+2. add header to files if missing?
+3. create PDFs for each atricle
 
 ```{r rmd_file}
 rmd_file <- function(p) {
@@ -78,10 +77,11 @@ library("rticles")
 dir.create(article_pdfs, showWarnings = FALSE)
 
 template_dir <- tempdir()
-rmarkdown::draft(file.path(template_dir, "article.Rmd"), template = "copernicus_article", package = "rticles", edit = FALSE, create_dir = FALSE)
+if (!file.exists(file.path(template_dir, "article.Rmd")))
+  rmarkdown::draft(file.path(template_dir, "article.Rmd"), template = "copernicus_article", package = "rticles", edit = FALSE, create_dir = FALSE)
 list.files(template_dir)
 
-knit_file <- function(article) {
+knit_article <- function(article) {
   output_file <- file.path(article_pdfs, paste0("agile_2019_phd_school_", article$id, ".pdf"))
   cat("Rendering article", file.path(article$path, article$rmd_file), "to", output_file, "\n")
   
@@ -94,10 +94,11 @@ knit_file <- function(article) {
   rmarkdown::render(file.path(article$path, article$rmd_file),
                     output_format = rticles::copernicus_article(),
                     output_file = output_file)
+  
+  rmarkdown::yaml_front_matter()
 }
 
-knit_file(article = repos[1,])
-# PROBLEM: required header fields are missing
+knit_article(article = articles[1,])
 ```
 
 ## Metadata
