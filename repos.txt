@@ -5,6 +5,7 @@ Alexander Kmoch, Evelyn Uuemaa;https://github.com/allixender/agile_2019_summary
 Bruno Montibeller;https://github.com/brunomontibeller/agile_2019
 Jennie Gray;https://github.com/jgray1923/AGILE_2019_test
 # Marcin Szwagrzyk;https://github.com/marcinszwagrzyk/AGILE_school
+Marcin Szwagrzyk;https://github.com/agilephdschool2019/marcinszwagrzyk_AGILE_school
 Georgios Leventis;https://github.com/gxarmanis/agile_2019_test
 Ditsuhi Iskandaryan;https://github.com/Ditsuhi/agile2019
 Moris Zahtila;https://github.com/mzahtila/agile_phd_school
