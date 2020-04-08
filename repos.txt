@@ -1,19 +1,21 @@
-author;repo
+author;work_repo;other_repo
 # proceedings forword/summary
-Alexander Kmoch, Evelyn Uuemaa;https://github.com/allixender/agile_2019_summary
+Alexander Kmoch, Evelyn Uuemaa;agilephdschool2019/agile_2019_summary;allixender/agile_2019_summary
 # agile contributions, one PDF per student
-Bruno Montibeller;https://github.com/brunomontibeller/agile_2019
-Jennie Gray;https://github.com/jgray1923/AGILE_2019_test
-# Marcin Szwagrzyk;https://github.com/marcinszwagrzyk/AGILE_school
-Marcin Szwagrzyk;https://github.com/agilephdschool2019/marcinszwagrzyk_AGILE_school
-Georgios Leventis;https://github.com/gxarmanis/agile_2019_test
-Ditsuhi Iskandaryan;https://github.com/Ditsuhi/agile2019
-Moris Zahtila;https://github.com/mzahtila/agile_phd_school
-Daiga Paršova;https://github.com/daigaparsova/AGILE
-Ewa Grabska;https://github.com/egrabska/tartu_project
-Radek Barvíř;https://github.com/radekbarvir/agile_2019_test
-Jakub Konicek;https://github.com/konija01/agile_test
-Najmeh Mozaffaree Pour;https://github.com/nmp1987/agile_2019_test
-Marketa Beitlova;https://github.com/espesedm7/agile_2019
-Yannis Paraskevopoulos;https://github.com/yannis-p/agile_2019_test
-Sansar Raj Meena;https://github.com/sansarmeena/Agile_2019_phd_Meena
+# bruno CEUR CC statement? TBC
+Bruno Montibeller;agilephdschool2019/brunomontibeller_agile_2019;brunomontibeller/agile_2019
+Jennie Gray;agilephdschool2019/jgray1923_AGILE_2019;jgray1923/AGILE_2019_test 
+Marcin Szwagrzyk;agilephdschool2019/marcinszwagrzyk_AGILE_school;marcinszwagrzyk/AGILE_school
+# Georgios hasn't submitted CC author agreement (yet?) TBC
+Georgios Leventis;agilephdschool2019/gxarmanis_agile_2019;gxarmanis/agile_2019_test
+Ditsuhi Iskandaryan;agilephdschool2019/Ditsuhi_agile2019;Ditsuhi/agile2019
+Moris Zahtila;agilephdschool2019/mzahtila_agile_phd_school;mzahtila/agile_phd_school
+Daiga Paršova;agilephdschool2019/daigaparsova_AGILE;daigaparsova/AGILE
+Ewa Grabska;agilephdschool2019/egrabska_tartu_project;egrabska/tartu_project
+Radek Barvíř;agilephdschool2019/radekbarvir_agile_2019;radekbarvir/agile_2019_test
+Jakub Konicek;agilephdschool2019/konija01_agile;konija01/agile_test
+# Najmeh doesn't have the Rmd file in the repo, TBD
+# Najmeh Mozaffaree Pour;agilephdschool2019/nmp1987_agile_2019;nmp1987/agile_2019_test
+Marketa Beitlova;agilephdschool2019/espesedm7_agile_2019;espesedm7/agile_2019
+Yannis Paraskevopoulos;agilephdschool2019/yannis-p_agile_2019;yannis-p/agile_2019_test
+Sansar Raj Meena;agilephdschool2019/sansarmeena_Agile_2019_phd;sansarmeena/Agile_2019_phd_Meena
