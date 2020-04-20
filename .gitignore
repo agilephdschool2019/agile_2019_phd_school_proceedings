@@ -41,3 +41,11 @@ vignettes/*.pdf
 article_repos/
 
 article_pdfs/*.tex
+
+template/paper/paper2p.bbl
+
+template/paper/paper2p.log
+
+template/paper/paper2p.pdf
+
+template/paper/paper2p.synctex.gz

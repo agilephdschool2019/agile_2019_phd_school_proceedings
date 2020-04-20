@@ -10,3 +10,6 @@ Date: 25. - 28. November, 2019
 
 License: CC-BY-4.0
 
+## CEUR LaTed Template
+
+`rmarkdown` template based on the two-colum style from http://ceur-ws.org/Vol-XXX/samplestyles/ is in the directory `template/paper`.
