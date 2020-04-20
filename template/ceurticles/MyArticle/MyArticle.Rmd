@@ -1,38 +1,29 @@
-\documentclass[a4paper]{article}
-\usepackage{graphicx}
-\usepackage{twocolpceurws}
+---
+title: "CEUR paper2p"
+author:
+  - name: Mary Y. Writter 
+    affiliation: Publishing Dept.
+    address: Paper City, PUB 11011
+    email: mqw@pubdept.eu
+  - name: John X. Ceur
+    affiliation: Science Dept.
+    address: Online City, CEUR 99099
+    email: jqq@ceur-ws.org
+  - name: Yvonne Onderzoeker
+    affiliation: Research Dept.
+    address: Science City, Sci 88088
+    email: yvo@science.rdept.net
+institution: The Institute of CEUR Stuff
+output:
+  ceurticles::twocolpceurws_article
+abstract: |
+  The Abstract paragraph should be indented 1/4 inch (2 pica) on both the left and right-hand margins.
+  Abstract must be centered, bold, and in point size 12.
+  Two line spaces precede the Abstract. The Abstract must be limited to one paragraph.
+bibliography: samplebib.bib
+---
 
-
-\title{The Two Column Style With Page Numbers for CEUR-WS}
-
-\author{
-Mary Y. Writter \\ Publishing Dept.\\
-                Paper City, PUB 11011 \\ mqw@pubdept.eu
-\and
-John X. Ceur \\ Science Dept.\\
-                Online City, CEUR 99099 \\ jqq@ceur-ws.org
-\and
-Yvonne Onderzoeker \\ Research Dept.\\
-                Science City, Sci 88088 \\ yvo@science.rdept.net
-}
-
-\institution{}
-
-
-
-
-\begin{document}
-\maketitle
-
-\begin{abstract}
-The Abstract paragraph should be indented $1/4$ inch (2 pica) on both
-the left and right-hand margins. Abstract must be centered, bold, and
-in point size 12. Two line spaces precede the Abstract. The Abstract
-must be limited to one paragraph.
-\end{abstract}
-
-
-\section{General Formatting Instructions}
+# General Formatting Instructions
 
 The format is in one column. The left margin is .9 inches (5.5 picas). Use 10 point type,
 with a vertical spacing of 11 points. Times Roman is the preferred
@@ -46,44 +37,43 @@ flush left and flush right.
 
 Paragraphs are indented by 1 pica with no space between paragraphs.
 
-\section{First Level Heading}
+# First Level Heading
 
 First level headings are all flush left, initial caps, bold and in point
-size 12. One line space before the first level heading and $1/2$ line
+size 12. One line space before the first level heading and 1/2 line
 space after the first level heading.
 
-\subsection{Second Level Heading}
+## Second Level Heading
 
 Second level headings must be flush left, initial caps, bold and in point
-size 10. One line space before the second level heading and $1/2$ line
+size 10. One line space before the second level heading and 1/2 line
 space after the second level heading.
 
-\subsubsection{Third Level Heading}
+### Third Level Heading
 
 Third level headings must be flush left, initial caps and bold.
-One line space before the third level heading and $1/2$ line
+One line space before the third level heading and 1/2 line
 space after the third level heading.
 
-\paragraph{Fourth Level Heading}
+#### Fourth Level Heading
 
 Fourth level headings must be flush left, initial caps and roman type.
-One line space before the fourth level heading and $1/2$ line
+One line space before the fourth level heading and 1/2 line
 space after the fourth level heading.
 
-\subsection{Citations In Text}
+## Citations In Text
 
-Citations within the text should indicate the author's last name and
-year\cite{Knuth-vol3}. Reference style\cite{Comer-btree}
-should follow the style that you are used to using, as long as the
+Citations within the text should indicate the author's last name and year [@Knuth-vol3].
+Reference style @Comer-btree should follow the style that you are used to using, as long as the
 citation style is consistent.
 
-\subsubsection{Footnotes}
+### Footnotes
 
 Indicate footnotes with a number\footnote{This is a sample footnote} in
 the text. Place the footnotes at the bottom of the page they appear on.
 Precede the footnote with a vertical rule of 2 inches (12 picas).
 
-\subsubsection{Figures}
+### Figures
 
 All artwork must be centered, neat, clean and legible. Do not use pencil
 or hand-drawn artwork. Figure number and caption always appear after the
@@ -96,19 +86,18 @@ Make sure that the figure caption does not get separated from the
 figure. Leave extra white space at the bottom of the page to avoid
 splitting the figure and figure caption.
 
-Figure \ref{fig1} shows how to include a figure as encapsulated postscript.
-The source of the figure is in file {\tt fig1.eps}.
+Figure \ref{fig1} shows how to include a figure as PDF.
+The source of the figure is in file `fig.pdf`.
 
 \begin{figure}[ht]
 \begin{center}
-\includegraphics[height=4cm]{fig1-eps-converted-to}
+\includegraphics[height=4cm]{fig1}
 \caption{Sample EPS figure }
 \label{fig1}
 \end{center}
 \end{figure}
 
 Below is another figure using LaTeX commands.
-
 
 \begin{figure}[ht]
 \begin{center}
@@ -125,15 +114,13 @@ Below is another figure using LaTeX commands.
 \end{center}
 \end{figure}
 
-\subsubsection{Tables}
+## Tables
 
-All tables must be centered, neat, clean and legible. Do not use pencil
-or hand-drawn tables. Table number and title always appear before the
-table.
+All tables must be centered, neat, clean and legible. Do not use pencil or hand-drawn tables.
+Table number and title always appear before the table.
 
-One line space before the table title, one line space after the table
-title and one line space after the table. The table title must be
-initial caps and each table numbered consecutively.
+One line space before the table title, one line space after the table title and one line space after the table.
+The table title must be initial caps and each table numbered consecutively.
 
 \begin{table}[ht]
 \begin{center}
@@ -151,19 +138,14 @@ E & F & 3\\ \hline
 \end{table}
 
 
-\subsubsection{Handling References}
+## Handling References
 
-Use a first level heading for the references. References follow the
-acknowledgements.
+Use a first level heading for the references.
+References follow the acknowledgements.
 
+## Acknowledgements
 
-\subsubsection{Acknowledgements}
+Use a third level heading for the acknowledgements.
+All acknowledgements go at the end of the paper.
 
-Use a third level heading for the acknowledgements. All acknowledgements
-go at the end of the paper.
-
-
-\bibliographystyle{alpha} 
-\bibliography{samplebib}
-
-\end{document}
+# References {-}

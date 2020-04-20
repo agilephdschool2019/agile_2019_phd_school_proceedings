@@ -1,0 +1,19 @@
+Package: ceurticles
+Title: CEUR WS R Markdown templates
+Version: 0.1.9000
+Authors@R: 
+    c(person(given = "Daniel",
+             family = "Nuest",
+             role = c("aut", "cre"),
+             email = "daniel.nuest@uni-muenster.de",
+             comment = c(ORCID = "0000-0003-2392-6140")))
+Maintainer: Daniel Nuest <daniel.nuest@uni-muenster.de>
+Description: A package providing CEUR article templates for use wirh R Markdown.
+License: MIT + file LICENSE
+URL: https://github.com/agilephdschool2019/agile_2019_phd_school_proceedings/
+Depends: R (>= 3.6.0)
+Imports: rmarkdown
+RoxygenNote: 7.1.0
+Encoding: UTF-8
+Collate:
+  ceurticles.R

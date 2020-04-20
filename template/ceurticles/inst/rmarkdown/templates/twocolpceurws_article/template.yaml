@@ -1,0 +1,4 @@
+name: CEUR two-column w/ page numbers
+description: >
+  Template for creating two-colum CEUR proceedings articles with page numbers, see http://ceur-ws.org/Vol-XXX/samplestyles/
+create_dir: true

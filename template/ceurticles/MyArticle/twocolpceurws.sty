@@ -147,25 +147,7 @@
   \vskip 32pt}}
 
 
-% The \copyrightspace command is used to produce the CEURWS copyright in the
-% first column where a copyright notice belongs.  Note that it
-% should appear after any \footnote commands that produce footnotes
-% for the first column.
-
-% Edit the label XYZ of the workshop/conference, the names of the proceedings editors,
-% location, Country and date of the workshop/conference, and the URL of the
-% proceedings. If you know the volume number XXX, then replace use
-% http://ceur-ws.org/Vol-XXX by replacing XXX with your volume number.
-% Otherwise, just use http://ceur-ws.org
-
-\def\copyrightspace{
-\long\def\@makefntext##1{\noindent ##1}
-\footnotesep 1em
-\footnotetext[0]{\em Copyright \copyright\ by the paper's authors.
-Use permitted under Creative Commons License Attribution 4.0 International (CC BY 4.0).}
-\footnotetext[0]{In: A.\ Editor, B.\ Coeditor (eds.): Proceedings of the XYZ Workshop,
-Location, Country, DD-MMM-YYYY, published at http://ceur-ws.org}
-}
+\input{copyright.tex}
 
 % The abstract Environment
 
