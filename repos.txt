@@ -1,6 +1,6 @@
 author;work_repo;other_repo
 # proceedings forword/summary
-Alexander Kmoch, Evelyn Uuemaa;agilephdschool2019/agile_2019_summary;allixender/agile_2019_summary
+Alexander Kmoch, Evelyn Uuemaa, Daniel Nüst;agilephdschool2019/agile_2019_summary;allixender/agile_2019_summary
 # agile contributions, one PDF per student
 # bruno CEUR CC statement? TBC
 Bruno Montibeller;agilephdschool2019/brunomontibeller_agile_2019;brunomontibeller/agile_2019
