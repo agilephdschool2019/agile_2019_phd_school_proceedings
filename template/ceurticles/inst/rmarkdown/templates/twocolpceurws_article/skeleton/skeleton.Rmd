@@ -5,6 +5,7 @@ author:
     affiliation: Publishing Dept.
     address: Paper City, PUB 11011
     email: mqw@pubdept.eu
+    orcid: 0000-0002-1825-0097
   - name: John X. Ceur
     affiliation: Science Dept.
     address: Online City, CEUR 99099
@@ -13,6 +14,7 @@ author:
     affiliation: Research Dept.
     address: Science City, Sci 88088
     email: yvo@science.rdept.net
+    orcid: 0000-0002-1825-0097
 institution: The Institute of CEUR Stuff
 output:
   ceurticles::twocolpceurws_article
