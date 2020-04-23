@@ -9,12 +9,14 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+This document provides some scripts and documentation of manual steps for generating the AGILE 2019 PhD School Proceedings for CEUR-WS.
+
 ## Get the repos
 
 ```{r paths}
 library("here")
 article_repos <- here::here("article_repos")
-article_pdfs <- here::here("article_pdfs")
+article_pdfs <- here::here("submission/ceur-ws")
 ```
 
 To update a specific article, simply delete the corresponding directory from `r article_repos`.
@@ -40,16 +42,23 @@ for (i in 1:nrow(articles)) {
     next()
   
   dir.create(path, showWarnings = FALSE)
-  cat("Cloning for", repo$author, "from", repo$repo, "to", path, "\n")
-  gert::git_clone(url = repo$repo, path = path)
+  cat("Cloning for", repo$author, "from", repo$work_repo, "to", path, "\n")
+  gert::git_clone(url = paste0("https://github.com/", repo$work_repo), path = path)
 }
 ```
 
 ## Create a PDF for each repo
 
+```{r ceur_template, eval=FALSE, include=FALSE}
+# notes and testing of template usage
+library("rmarkdown")
+
+remotes::install_local("template/ceurticles")
+```
+
 1. identify "main file"
 2. add header to files if missing?
-3. create PDFs for each atricle
+3. create PDFs for each article using the template in the R package `template/ceurticles`
 
 ```{r rmd_file}
 rmd_file <- function(p) {
@@ -74,32 +83,140 @@ articles$rmd_file <- unlist(sapply(articles %>% arrange(id) %>% .$path, rmd_file
 ```{r knit}
 library("rmarkdown")
 library("rticles")
+# remotes::install_local("template/ceurticles")
+library("ceurticles")
+
 dir.create(article_pdfs, showWarnings = FALSE)
 
 template_dir <- tempdir()
 if (!file.exists(file.path(template_dir, "article.Rmd")))
-  rmarkdown::draft(file.path(template_dir, "article.Rmd"), template = "copernicus_article", package = "rticles", edit = FALSE, create_dir = FALSE)
-list.files(template_dir)
+  rmarkdown::draft(file.path(template_dir, "article.Rmd"), template = "twocolpceurws_article", package = "ceurticles", edit = FALSE, create_dir = FALSE)
+#list.files(template_dir)
 
-knit_article <- function(article) {
-  output_file <- file.path(article_pdfs, paste0("agile_2019_phd_school_", article$id, ".pdf"))
-  cat("Rendering article", file.path(article$path, article$rmd_file), "to", output_file, "\n")
-  
-  file.copy(file.path(template_dir, c("copernicus.cls",
-                                      "copernicus.bst",
-                                      "copernicus.cfg",
-                                      "pdfscreen.sty",
-                                      "pdfscreencop.sty")), article$path)
-  
-  rmarkdown::render(file.path(article$path, article$rmd_file),
-                    output_format = rticles::copernicus_article(),
-                    output_file = output_file)
-  
-  rmarkdown::yaml_front_matter()
+copy_article_files <- function(article) {
+  file.copy(file.path(template_dir, c("copyright.tex",
+                                      "twocolpceurws.sty",
+                                      "samplebib.bib")),
+            article$path, overwrite = TRUE)
 }
 
-knit_article(article = articles[1,])
+copy_article_files(article = articles[1,])
+
+# TODO do for all papers
 ```
+
+**Now manually make sure that the R Markdown files compile.**
+
+Here is a template header with the required fields.
+Note that the `bibliography`, even if no references are used, must be set.
+The authors' `affiliation`, `orcid` and `email` are optional.
+
+```yaml
+---
+title: "AGILE PhD School working notes"
+author:
+  - name: Alexander Kmoch
+    affiliation: University of Tartu, Estonia
+    email: alexander.kmoch@ut.ee
+    orcid: 0000-0003-4386-4450
+  - name: Evelyn Uuemaa
+    affiliation: University of Tartu, Estonia
+    orcid: 0000-0002-0782-6740
+abstract: |
+   TODO abstract here
+output:
+  ceurticles::twocolpceurws_article
+bibliography: samplebib.bib
+---
+```
+
+```{r render_single}
+render_article_file <- function(article) {
+  output_file <- file.path(article_pdfs, paste0(article$id, ".pdf"))
+  cat("Rendering article", file.path(article$path, article$rmd_file), "to", output_file, "\n")
+  
+  rmarkdown::render(file.path(article$path, article$rmd_file),
+                    output_file = output_file)
+}
+
+render_article_file(articles[1,])
+
+# TODO do for all papers
+```
+
+## Create CEUR-WS proceedings
+
+Based on **http://ceur-ws.org/HOWTOSUBMIT.html**
+
+### Generate the table of contents
+
+1. Install [`ceur-make`](https://github.com/ceurws/ceur-make)
+  - On Ubuntu install `libsaxonhe-java` and find the location of the `.jar` file with `dpkg -L libsaxonhe-java` (or get the JAR from somewhere else)
+  - Create the submission files from the directory of `ceur-make`
+    `./ceur-make-init ~/git/agile_2019_phd_school_proceedings/submission`
+  - Adjust `Makefile.vars` with path to SAXON HE
+3. Enter all information in `submission/workshop.xml` _manually_
+3. Enter all information in `submission/toc.xml` _with the script below_
+   ```{r toc}
+   # RUN MANUALLY
+   library("glue")
+   author_template <- '<author>{author}</author>'
+   paper_template <- '<paper id="{id}">
+         <title>{title}</title>
+         <authors>
+           {authors}
+         </authors>
+     </paper>'
+   
+   generate_toc_entry <- function(article) {
+     article_yaml <- rmarkdown:::yaml_front_matter(file.path(article$path, article$rmd_file))
+     authors <- paste0(glue::glue_data(
+                            list(author = sapply(article_yaml$author,
+                                                 function(a) { a$name })),
+                            author_template),
+                       collapse = "\n      ")
+     glue::glue_data(list(title = article_yaml$title,
+                          id = article$id,
+                          authors = authors),
+                     paper_template)
+   }
+   
+   toc <- c(
+     generate_toc_entry(articles[1,])
+   )
+   
+   # TODO do for all papers
+   
+   writeLines(c("<toc>",
+                toc,
+                "</toc>"),
+              con = file("submission/toc.xml"))
+   ```
+3. Create submission directory with `ceur-make`
+   ```bash
+   cd submission
+   make ceur-ws/index.html ceur-ws/temp.bib
+   ```
+
+### Prepare the submission file
+
+1. Double check `index.html`
+1. Check `submission/ceur-ws/temp.bib` and rename it to `AGILEPHD2019.bib`
+2. HTML Validation
+   > _You can check the consistency/completeness of the submission directory by accessing it locally with your Web browser, and we require you to validate it using [the W3C Validator](https://validator.w3.org/nu). If you use RDFa tags, we ask you to validate your RDFa by using [the W3C RDFa parser](http://www.w3.org/2012/pyRdfa/)._
+
+### Submit with the "Upload (Procedure PUT)"
+
+1. Check http://ceur-ws.org/HOWTOSUBMIT.html#TOPERRORS
+1. Create a release tag, https://github.com/agilephdschool2019/agile_2019_phd_school_proceedings/releases
+2. Create the submission ZIP file as documented by CEUR (see above)
+3. Upload the submission ZIP to the release
+4. Upload a ZIP with the signed agreements to another place
+4. Send the link to the PDF to CEUR [via Email](ceurws@sunsite.informatik.rwth-aachen.de)
+  - Subject: `CEURWS submission: (workshop acronym)`
+  - Content:
+    - URL of submission directory with ZIP files for the submission and the signed agreements
+    - Your contact details
 
 ## Metadata
 

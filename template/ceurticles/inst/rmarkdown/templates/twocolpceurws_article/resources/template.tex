@@ -1,0 +1,56 @@
+\documentclass[a4paper]{article}
+\usepackage{graphicx}
+\usepackage{twocolpceurws}
+
+% Added to support hyperlinks from rmarkdown
+\usepackage[hidelinks]{hyperref}
+
+\title{$title$}
+
+\author{
+$for(author)$
+
+$author.name$ $if(author.orcid)$ \orcid{$author.orcid$} $endif$
+
+$if(author.affiliation)$
+ \\ $author.affiliation$
+$endif$
+
+$if(author.address)$
+ \\ $author.address$
+$endif$
+
+$if(author.email)$
+ \\ $author.email$
+$endif$
+
+\\
+
+\and
+
+$endfor$
+}
+
+$if(institution)$
+\institution{$institution$}
+$else$
+\institution{\ }
+$endif$
+
+\begin{document}
+\maketitle
+
+$if(abstract)$
+\begin{abstract}
+$abstract$
+\end{abstract}
+$endif$
+
+$body$
+
+
+$if(bibliography)$
+\bibliography{$bibliography$}
+$endif$
+
+\end{document}
