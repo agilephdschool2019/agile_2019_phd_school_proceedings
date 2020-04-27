@@ -65,7 +65,8 @@ remotes::install_local("template/ceurticles", force = TRUE)
 
 ```{r rmd_file}
 # rename wrong input files
-file.rename(from = "article_repos/Bruno_Montibeller/notes_agile_2019.Rmd", "article_repos/Bruno_Montibeller/notes_agile_2019.Rmd.dontuse")
+if(file.exists("article_repos/Bruno_Montibeller/notes_agile.Rmd"))
+  file.rename(from = "article_repos/Bruno_Montibeller/notes_agile.Rmd", "article_repos/Bruno_Montibeller/notes_agile.Rmd.dontuse")
 
 rmd_file <- function(p) {
   candidates <- list.files(p, pattern = "\\.Rmd$", ignore.case = TRUE)
@@ -93,7 +94,6 @@ articles %>%
 ```{r copy_template_files}
 library("rmarkdown")
 library("rticles")
-# remotes::install_local("template/ceurticles")
 library("ceurticles")
 
 dir.create(article_pdfs, showWarnings = FALSE)
@@ -151,11 +151,15 @@ render_article_file <- function(article) {
                     output_file = output_file)
 }
 
-render_article_file(articles[5,])
+#render_article_file(articles[14,])
 
 for (i in 1:nrow(articles)) {
   render_article_file(article = articles[i,])
 }
+```
+
+```{r list_files}
+list.files(article_pdfs)
 ```
 
 ## Create CEUR-WS proceedings
@@ -171,42 +175,40 @@ Based on **http://ceur-ws.org/HOWTOSUBMIT.html**
   - Adjust `Makefile.vars` with path to SAXON HE
 3. Enter all information in `submission/workshop.xml` _manually_
 3. Enter all information in `submission/toc.xml` _with the script below_
-   ```{r toc}
-   # RUN MANUALLY
-   library("glue")
-   author_template <- '<author>{author}</author>'
-   paper_template <- '<paper id="{id}">
-         <title>{title}</title>
-         <authors>
-           {authors}
-         </authors>
-     </paper>'
-   
-   generate_toc_entry <- function(article) {
-     article_yaml <- rmarkdown:::yaml_front_matter(file.path(article$path, article$rmd_file))
-     authors <- paste0(glue::glue_data(
-                            list(author = sapply(article_yaml$author,
-                                                 function(a) { a$name })),
-                            author_template),
-                       collapse = "\n      ")
-     glue::glue_data(list(title = article_yaml$title,
-                          id = article$id,
-                          authors = authors),
-                     paper_template)
-   }
-   
-   toc <- c(
-     generate_toc_entry(articles[1,])
-   )
-   
-   # TODO do for all papers
-   
-   writeLines(c("<toc>",
-                toc,
-                "</toc>"),
-              con = file("submission/toc.xml"))
-   ```
-3. Create submission directory with `ceur-make`
+```{r toc}
+library("glue")
+author_template <- '<author>{author}</author>'
+paper_template <- '<paper id="{id}">
+      <title>{title}</title>
+      <authors>
+        {authors}
+      </authors>
+  </paper>'
+
+generate_toc_entry <- function(article) {
+  article_yaml <- rmarkdown:::yaml_front_matter(file.path(article$path, article$rmd_file))
+  authors <- paste0(glue::glue_data(
+                         list(author = sapply(article_yaml$author,
+                                              function(a) { a$name })),
+                         author_template),
+                    collapse = "\n      ")
+  glue::glue_data(list(title = article_yaml$title,
+                       id = article$id,
+                       authors = authors),
+                  paper_template)
+}
+
+tocs <- c()
+for (i in 1:nrow(articles)) {
+  tocs <- c(tocs, generate_toc_entry(article = articles[i,]))
+}
+
+writeLines(c("<toc>",
+             tocs,
+             "</toc>"),
+           con = file("submission/toc.xml"))
+```
+3. Create submission in submission directory with `ceur-make`
    ```bash
    cd submission
    make ceur-ws/index.html ceur-ws/temp.bib
