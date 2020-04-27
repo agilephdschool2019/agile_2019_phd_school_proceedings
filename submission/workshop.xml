@@ -12,11 +12,11 @@
 
     <number>2589</number>
 
-    <homepage>https://www.geograafia.ut.ee/en/studies/agile-phd-school-2019</homepage>
+    <homepage>https://agile-online.org/agile-actions/phd-school</homepage>
 
     <language>eng</language>
     
-    <location href="https://en.wikipedia.org/wiki/Tartu">Tartu, Estonia</location>
+    <location href="https://www.geograafia.ut.ee/en/about-us/chair-geoinformatics-and-cartography">Tartu, Estonia</location>
     <date>
         <from>2019-11-25</from>
         <to>2019-11-28</to>
@@ -34,16 +34,16 @@
             <country>Estonia</country>
         </editor>
         <editor>
-            <homepage>https://landscape-geoinformatics.ut.ee/</homepage>
-            <name>Evelyn Uuemaa</name>
-            <affiliation>University of Tartu, Estonia</affiliation>
-            <country>Estonia</country>
-        </editor>
-        <editor>
             <homepage>http://danielnuest.de/</homepage>
             <name>Daniel Nüst</name>
             <affiliation>University of Münster, Germany</affiliation>
             <country>Germany</country>
+        </editor>
+        <editor>
+            <homepage>https://landscape-geoinformatics.ut.ee/</homepage>
+            <name>Evelyn Uuemaa</name>
+            <affiliation>University of Tartu, Estonia</affiliation>
+            <country>Estonia</country>
         </editor>
     </editors>
 </workshop>

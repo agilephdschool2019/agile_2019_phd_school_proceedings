@@ -2,7 +2,9 @@
 title: "AGILE 2019 PhD School Proceedings"
 author: "Daniel Nüst"
 date: "`r Sys.time()`"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
