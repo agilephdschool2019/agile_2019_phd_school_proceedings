@@ -40,8 +40,10 @@ library("gert")
 for (i in 1:nrow(articles)) {
   repo <- articles[i,]
   path <- repo$path
-  if(dir.exists(path))
+  if(dir.exists(path)) {
+    cat("Skipping existing directory ", path, "\n")
     next()
+  }
   
   dir.create(path, showWarnings = FALSE)
   cat("Cloning for", repo$author, "from", repo$work_repo, "to", path, "\n")
@@ -51,20 +53,22 @@ for (i in 1:nrow(articles)) {
 
 ## Create a PDF for each repo
 
-```{r ceur_template, eval=FALSE, include=FALSE}
-# notes and testing of template usage
+```{r ceur_template}
 library("rmarkdown")
-
-remotes::install_local("template/ceurticles")
+remotes::install_local("template/ceurticles", force = TRUE)
 ```
 
 1. identify "main file"
-2. add header to files if missing?
-3. create PDFs for each article using the template in the R package `template/ceurticles`
+2. create PDF for each article using the template in the R package `template/ceurticles`
+  1. copy template files to the paper directory
+  2. render document
 
 ```{r rmd_file}
+# rename wrong input files
+file.rename(from = "article_repos/Bruno_Montibeller/notes_agile_2019.Rmd", "article_repos/Bruno_Montibeller/notes_agile_2019.Rmd.dontuse")
+
 rmd_file <- function(p) {
-  candidates <- list.files(p, pattern = "\\.Rmd", ignore.case = TRUE)
+  candidates <- list.files(p, pattern = "\\.Rmd$", ignore.case = TRUE)
   if(length(candidates) > 1) {
     warning("Found more than one R Markdown file in ", p, "\n\t", toString(candidates), "\n\tUsing: ", candidates[[1]], "\n\n")
     return(candidates[[1]])
@@ -79,10 +83,14 @@ rmd_file <- function(p) {
 }
 
 articles$rmd_file <- unlist(sapply(articles %>% arrange(id) %>% .$path, rmd_file))
-#articles
 ```
 
-```{r knit}
+```{r articles}
+articles %>%
+  dplyr::mutate(path = sapply(articles$path, relative_to, dir = here(), USE.NAMES = FALSE))
+```
+
+```{r copy_template_files}
 library("rmarkdown")
 library("rticles")
 # remotes::install_local("template/ceurticles")
@@ -102,9 +110,11 @@ copy_article_files <- function(article) {
             article$path, overwrite = TRUE)
 }
 
-copy_article_files(article = articles[1,])
+#copy_article_files(article = articles[1,])
 
-# TODO do for all papers
+for (i in 1:nrow(articles)) {
+  copy_article_files(article = articles[i,])
+}
 ```
 
 **Now manually make sure that the R Markdown files compile.**
@@ -141,9 +151,11 @@ render_article_file <- function(article) {
                     output_file = output_file)
 }
 
-render_article_file(articles[1,])
+render_article_file(articles[5,])
 
-# TODO do for all papers
+for (i in 1:nrow(articles)) {
+  render_article_file(article = articles[i,])
+}
 ```
 
 ## Create CEUR-WS proceedings
@@ -212,7 +224,7 @@ Based on **http://ceur-ws.org/HOWTOSUBMIT.html**
 1. Check http://ceur-ws.org/HOWTOSUBMIT.html#TOPERRORS
 1. Create a release tag, https://github.com/agilephdschool2019/agile_2019_phd_school_proceedings/releases
 2. Create the submission ZIP file as documented by CEUR (see above)
-3. Upload the submission ZIP to the release
+3. Upload the submission ZIP to the GitHub release
 4. Upload a ZIP with the signed agreements to another place
 4. Send the link to the PDF to CEUR [via Email](ceurws@sunsite.informatik.rwth-aachen.de)
   - Subject: `CEURWS submission: (workshop acronym)`
@@ -225,4 +237,3 @@ Based on **http://ceur-ws.org/HOWTOSUBMIT.html**
 ```{r metadata}
 sessionInfo()
 ```
-

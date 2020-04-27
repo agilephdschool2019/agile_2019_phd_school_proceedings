@@ -24,9 +24,7 @@
     
     <pubyear>2020</pubyear>
     
-    <!-- editors of the proceedings volume (usually at the same time the chairs of the workshop; CEURVOLEDITOR) -->
     <editors>
-        <!-- please sort alphabetically; the XSLT does not yet do this automatically -->
         <editor submitting="true">
             <homepage>https://allixender.blogspot.com.ee/</homepage>
             <name>Alexander Kmoch</name>
