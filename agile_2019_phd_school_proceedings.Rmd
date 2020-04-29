@@ -30,7 +30,11 @@ library("dplyr")
 library("stringr")
 
 articles <- as_tibble(read.csv2(here::here("repos.txt"), comment.char = "#", stringsAsFactors = FALSE)) %>%
-  dplyr::mutate(id = stringr::str_replace_all(.$author, "[;\\.,\\s]", "_")) %>%
+  dplyr::mutate(id = stringr::str_replace_all(.$author, "[;\\.,\\s]", " ") %>%
+                  stringr::str_replace_all(c('ü' = 'ue', 'ï' = 'ie', 'ë' = 'ee', 'ä' = 'ae',
+                             'ö' = 'oe', 'š' = 's', 'í' = 'i', 'ř' = 'r')) %>%
+                  stringr::str_squish() %>%
+                  stringr::str_replace_all(" ", "_")) %>%
   dplyr::mutate(path = file.path(article_repos, .$id)) %>%
   arrange(id)
 
@@ -58,10 +62,10 @@ library("rmarkdown")
 remotes::install_local("template/ceurticles", force = TRUE)
 ```
 
-1. identify "main file"
-2. create PDF for each article using the template in the R package `template/ceurticles`
-  1. copy template files to the paper directory
-  2. render document
+1. Identify "main file"
+2. For each article
+  1. Copy template files using the template in the R package `template/ceurticles` to the paper directory
+  2. Render document
 
 ```{r rmd_file}
 # rename wrong input files
@@ -209,15 +213,17 @@ writeLines(c("<toc>",
            con = file("submission/toc.xml"))
 ```
 3. Create submission in submission directory with `ceur-make`
-   ```bash
-   cd submission
-   make ceur-ws/index.html ceur-ws/temp.bib
-   ```
+
+```{bash ceur-make}
+cd submission
+make ceur-ws/index.html ceur-ws/temp.bib
+mv ceur-ws/temp.bib ceur-ws/AGILEPHD2019.bib
+```
 
 ### Prepare the submission file
 
 1. Double check `index.html`
-1. Check `submission/ceur-ws/temp.bib` and rename it to `AGILEPHD2019.bib`
+1. Check `submission/ceur-ws/AGILEPHD2019.bib` and rename it to `AGILEPHD2019.bib`
 2. HTML Validation
    > _You can check the consistency/completeness of the submission directory by accessing it locally with your Web browser, and we require you to validate it using [the W3C Validator](https://validator.w3.org/nu). If you use RDFa tags, we ask you to validate your RDFa by using [the W3C RDFa parser](http://www.w3.org/2012/pyRdfa/)._
 
