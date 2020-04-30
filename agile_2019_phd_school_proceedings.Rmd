@@ -28,6 +28,7 @@ To update a specific article, simply delete the corresponding directory `r rmark
 library("tibble")
 suppressPackageStartupMessages(library("dplyr"))
 library("stringr")
+library("rmarkdown")
 
 articles <- as_tibble(read.csv2(here::here("repos.txt"), comment.char = "#",
                                 stringsAsFactors = FALSE)) %>%
@@ -60,8 +61,7 @@ for (i in 1:nrow(articles)) {
 ## Create a PDF for each repo
 
 ```{r ceur_template}
-library("rmarkdown")
-remotes::install_local("template/ceurticles", force = TRUE)
+remotes::install_local("template/ceurticles", force = TRUE, dependencies = FALSE)
 ```
 
 1. Identify "main file"
@@ -90,7 +90,6 @@ articles$rmd_file <- unlist(sapply(articles %>% arrange(id) %>% .$path, rmd_file
 ```
 
 ```{r articles}
-library("knitr")
 library("kableExtra")
 
 articles %>%
@@ -219,10 +218,12 @@ for (i in 1:nrow(articles)) {
   tocs <- c(tocs, generate_toc_entry(article = articles[i,]))
 }
 
+toc_file <- file("submission/toc.xml")
 writeLines(c("<toc>",
              tocs,
              "</toc>"),
-           con = file("submission/toc.xml"))
+           con = toc_file)
+close(toc_file)
 ```
 3. Create submission in submission directory with `ceur-make`
 
@@ -237,17 +238,24 @@ mv ceur-ws/temp.bib ceur-ws/AGILEPHD2019.bib
 1. Double check `submission/ceur-ws/index.html` and `submission/ceur-ws/AGILEPHD2019.bib`
 2. HTML Validation: _"You can check the consistency/completeness of the submission directory by accessing it locally with your Web browser, and we require you to validate it using [the W3C Validator](https://validator.w3.org/nu). If you use RDFa tags, we ask you to validate your RDFa by using [the W3C RDFa parser](http://www.w3.org/2012/pyRdfa/)."_
 
+**Note:** If you make any changes in the directory `submission/ceur-ws`, you must manually recreate the ZIP file!
+
+```{r zipfile}
+submission_file <- here::here("submission/agilephd2019.zip")
+file.remove(submission_file)
+zip(zipfile = submission_file, files = "submission/ceur-ws")
+```
+
 ### Submit with the "Upload (Procedure PUT)"
 
 1. Check http://ceur-ws.org/HOWTOSUBMIT.html#TOPERRORS
 1. Create a release tag, https://github.com/agilephdschool2019/agile_2019_phd_school_proceedings/releases
-2. Create the submission ZIP file as documented by CEUR (see above)
-3. Upload the submission ZIP to the GitHub release
-4. Upload a ZIP with the signed agreements to another place
-4. Send the link to the PDF to CEUR [via Email](ceurws@sunsite.informatik.rwth-aachen.de)
-  - Subject: `CEURWS submission: (workshop acronym)`
+3. Upload the submission ZIP `r ` to some public share
+4. Upload a ZIP with the signed agreements to some public share
+4. Send the link to the submission archive to CEUR [via Email](ceurws@sunsite.informatik.rwth-aachen.de)
+  - Subject: `CEURWS submission: AGILE PhD School 2019`
   - Content:
-    - URL of submission directory with ZIP files for the submission and the signed agreements
+    - URLs of the aforementioned ZIP files
     - Your contact details
 
 \newpage
