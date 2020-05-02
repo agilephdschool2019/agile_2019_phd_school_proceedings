@@ -21,16 +21,23 @@ article_repos <- here::here("article_repos")
 article_pdfs <- here::here("submission/ceur-ws")
 ```
 
-To update a specific article, simply delete the corresponding directory from `r article_repos`.
+To update a specific article, simply delete the corresponding directory `r rmarkdown::relative_to(dir = here(), article_repos)`
 
 ```{r article_repos}
 # read from repos.txt
 library("tibble")
-library("dplyr")
+suppressPackageStartupMessages(library("dplyr"))
 library("stringr")
+library("rmarkdown")
 
-articles <- as_tibble(read.csv2(here::here("repos.txt"), comment.char = "#", stringsAsFactors = FALSE)) %>%
-  dplyr::mutate(id = stringr::str_replace_all(.$author, "[;\\.,\\s]", "_")) %>%
+articles <- as_tibble(read.csv2(here::here("repos.txt"), comment.char = "#",
+                                stringsAsFactors = FALSE)) %>%
+  dplyr::mutate(id = stringr::str_replace_all(.$author, "[;\\.,\\s]", " ") %>%
+                  stringr::str_replace_all(
+                    c('ü' = 'ue', 'ï' = 'ie', 'ë' = 'ee', 'ä' = 'ae',
+                      'ö' = 'oe', 'š' = 's', 'í' = 'i', 'ř' = 'r')) %>%
+                  stringr::str_squish() %>%
+                  stringr::str_replace_all(" ", "_")) %>%
   dplyr::mutate(path = file.path(article_repos, .$id)) %>%
   arrange(id)
 
@@ -41,7 +48,7 @@ for (i in 1:nrow(articles)) {
   repo <- articles[i,]
   path <- repo$path
   if(dir.exists(path)) {
-    cat("Skipping existing directory ", path, "\n")
+    cat("Skipping existing directory ", rmarkdown::relative_to(dir = here(), path), "\n")
     next()
   }
   
@@ -54,24 +61,20 @@ for (i in 1:nrow(articles)) {
 ## Create a PDF for each repo
 
 ```{r ceur_template}
-library("rmarkdown")
-remotes::install_local("template/ceurticles", force = TRUE)
+remotes::install_local("template/ceurticles", force = TRUE, dependencies = FALSE)
 ```
 
-1. identify "main file"
-2. create PDF for each article using the template in the R package `template/ceurticles`
-  1. copy template files to the paper directory
-  2. render document
+1. Identify "main file"
+2. For each article
+  1. Copy template files using the template in the R package `template/ceurticles` to the paper directory
+  2. Render document
 
 ```{r rmd_file}
-# rename wrong input files
-if(file.exists("article_repos/Bruno_Montibeller/notes_agile.Rmd"))
-  file.rename(from = "article_repos/Bruno_Montibeller/notes_agile.Rmd", "article_repos/Bruno_Montibeller/notes_agile.Rmd.dontuse")
-
 rmd_file <- function(p) {
   candidates <- list.files(p, pattern = "\\.Rmd$", ignore.case = TRUE)
   if(length(candidates) > 1) {
-    warning("Found more than one R Markdown file in ", p, "\n\t", toString(candidates), "\n\tUsing: ", candidates[[1]], "\n\n")
+    warning("Found more than one R Markdown file in ", p, "\n\t",
+            toString(candidates), "\n\tUsing: ", candidates[[1]], "\n\n")
     return(candidates[[1]])
   }
   if(length(candidates) < 1) {
@@ -87,8 +90,14 @@ articles$rmd_file <- unlist(sapply(articles %>% arrange(id) %>% .$path, rmd_file
 ```
 
 ```{r articles}
+library("kableExtra")
+
 articles %>%
-  dplyr::mutate(path = sapply(articles$path, relative_to, dir = here(), USE.NAMES = FALSE))
+  dplyr::mutate(path = sapply(articles$path,
+                              rmarkdown::relative_to, dir = here(),
+                              USE.NAMES = FALSE)) %>%
+  knitr::kable(format = "latex") %>%
+  kableExtra::kable_styling(latex_options="scale_down")
 ```
 
 ```{r copy_template_files}
@@ -100,14 +109,15 @@ dir.create(article_pdfs, showWarnings = FALSE)
 
 template_dir <- tempdir()
 if (!file.exists(file.path(template_dir, "article.Rmd")))
-  rmarkdown::draft(file.path(template_dir, "article.Rmd"), template = "twocolpceurws_article", package = "ceurticles", edit = FALSE, create_dir = FALSE)
-#list.files(template_dir)
+  rmarkdown::draft(file.path(template_dir, "article.Rmd"),
+                   template = "twocolpceurws_article", package = "ceurticles",
+                   edit = FALSE, create_dir = FALSE)
 
 copy_article_files <- function(article) {
   file.copy(file.path(template_dir, c("copyright.tex",
                                       "twocolpceurws.sty",
                                       "samplebib.bib")),
-            article$path, overwrite = TRUE)
+            article$path, overwrite = FALSE)
 }
 
 #copy_article_files(article = articles[1,])
@@ -142,10 +152,11 @@ bibliography: samplebib.bib
 ---
 ```
 
-```{r render_single}
+```{r render_articles, results='hide'}
 render_article_file <- function(article) {
   output_file <- file.path(article_pdfs, paste0(article$id, ".pdf"))
-  cat("Rendering article", file.path(article$path, article$rmd_file), "to", output_file, "\n")
+  cat("Rendering article", file.path(article$path, article$rmd_file),
+      "to", output_file, "\n")
   
   rmarkdown::render(file.path(article$path, article$rmd_file),
                     output_file = output_file)
@@ -162,6 +173,8 @@ for (i in 1:nrow(articles)) {
 list.files(article_pdfs)
 ```
 
+\newpage
+
 ## Create CEUR-WS proceedings
 
 Based on **http://ceur-ws.org/HOWTOSUBMIT.html**
@@ -170,13 +183,15 @@ Based on **http://ceur-ws.org/HOWTOSUBMIT.html**
 
 1. Install [`ceur-make`](https://github.com/ceurws/ceur-make)
   - On Ubuntu install `libsaxonhe-java` and find the location of the `.jar` file with `dpkg -L libsaxonhe-java` (or get the JAR from somewhere else)
-  - Create the submission files from the directory of `ceur-make`
+  - Create the submission files from the directory of `ceur-make`, using
+  
     `./ceur-make-init ~/git/agile_2019_phd_school_proceedings/submission`
   - Adjust `Makefile.vars` with path to SAXON HE
 3. Enter all information in `submission/workshop.xml` _manually_
 3. Enter all information in `submission/toc.xml` _with the script below_
 ```{r toc}
-library("glue")
+suppressPackageStartupMessages(library("glue"))
+
 author_template <- '<author>{author}</author>'
 paper_template <- '<paper id="{id}">
       <title>{title}</title>
@@ -203,36 +218,47 @@ for (i in 1:nrow(articles)) {
   tocs <- c(tocs, generate_toc_entry(article = articles[i,]))
 }
 
+toc_file <- file("submission/toc.xml")
 writeLines(c("<toc>",
              tocs,
              "</toc>"),
-           con = file("submission/toc.xml"))
+           con = toc_file)
+close(toc_file)
 ```
 3. Create submission in submission directory with `ceur-make`
-   ```bash
-   cd submission
-   make ceur-ws/index.html ceur-ws/temp.bib
-   ```
+
+```{bash ceur-make}
+cd submission
+make ceur-ws/index.html ceur-ws/temp.bib
+mv ceur-ws/temp.bib ceur-ws/AGILEPHD2019.bib
+```
 
 ### Prepare the submission file
 
-1. Double check `index.html`
-1. Check `submission/ceur-ws/temp.bib` and rename it to `AGILEPHD2019.bib`
-2. HTML Validation
-   > _You can check the consistency/completeness of the submission directory by accessing it locally with your Web browser, and we require you to validate it using [the W3C Validator](https://validator.w3.org/nu). If you use RDFa tags, we ask you to validate your RDFa by using [the W3C RDFa parser](http://www.w3.org/2012/pyRdfa/)._
+1. Double check `submission/ceur-ws/index.html` and `submission/ceur-ws/AGILEPHD2019.bib`
+2. HTML Validation: _"You can check the consistency/completeness of the submission directory by accessing it locally with your Web browser, and we require you to validate it using [the W3C Validator](https://validator.w3.org/nu). If you use RDFa tags, we ask you to validate your RDFa by using [the W3C RDFa parser](http://www.w3.org/2012/pyRdfa/)."_
+
+**Note:** If you make any changes in the directory `submission/ceur-ws`, you must manually recreate the ZIP file!
+
+```{r zipfile}
+submission_file <- here::here("submission/agilephd2019.zip")
+file.remove(submission_file)
+zip(zipfile = submission_file, files = "submission/ceur-ws")
+```
 
 ### Submit with the "Upload (Procedure PUT)"
 
 1. Check http://ceur-ws.org/HOWTOSUBMIT.html#TOPERRORS
 1. Create a release tag, https://github.com/agilephdschool2019/agile_2019_phd_school_proceedings/releases
-2. Create the submission ZIP file as documented by CEUR (see above)
-3. Upload the submission ZIP to the GitHub release
-4. Upload a ZIP with the signed agreements to another place
-4. Send the link to the PDF to CEUR [via Email](ceurws@sunsite.informatik.rwth-aachen.de)
-  - Subject: `CEURWS submission: (workshop acronym)`
+3. Upload the submission ZIP `r ` to some public share
+4. Upload a ZIP with the signed agreements to some public share
+4. Send the link to the submission archive to CEUR [via Email](ceurws@sunsite.informatik.rwth-aachen.de)
+  - Subject: `CEURWS submission: AGILE PhD School 2019`
   - Content:
-    - URL of submission directory with ZIP files for the submission and the signed agreements
+    - URLs of the aforementioned ZIP files
     - Your contact details
+
+\newpage
 
 ## Metadata
 
