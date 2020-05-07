@@ -1,6 +1,6 @@
 Package: ceurticles
 Title: CEUR WS R Markdown templates
-Version: 0.1.9000
+Version: 0.1.9001
 Authors@R: 
     c(person(given = "Daniel",
              family = "Nuest",
