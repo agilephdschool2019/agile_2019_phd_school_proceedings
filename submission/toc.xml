@@ -3,8 +3,8 @@
     <title>5th AGILE PhD School Proceedings Foreword</title>
     <authors>
       <author>Alexander Kmoch</author>
-      <author>Evelyn Uuemaa</author>
       <author>Daniel Nüst</author>
+      <author>Evelyn Uuemaa</author>
     </authors>
 </paper>
 <paper id="Bruno_Montibeller">
@@ -20,7 +20,7 @@
     </authors>
 </paper>
 <paper id="Ditsuhi_Iskandaryan">
-    <title>Study and prediction of pollution in smart cities through machine learning techniques</title>
+    <title>Study and prediction of air quality in smart cities through machine learning techniques</title>
     <authors>
       <author>Ditsuhi Iskandaryan</author>
     </authors>
@@ -65,6 +65,12 @@
     <title>AGILE PhD School Report: Key Takeaways</title>
     <authors>
       <author>Moris Zahtila</author>
+    </authors>
+</paper>
+<paper id="Najmeh_Mozaffaree_Pour">
+    <title>Analysis and Visualisation of Urban Spatial Data</title>
+    <authors>
+      <author>Najmeh Mozaffaree Pour</author>
     </authors>
 </paper>
 <paper id="Radek_Barvir">
