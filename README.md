@@ -1,8 +1,6 @@
 # AGILE PhD School 2019 Proceedings
 
-
 [![DOI](https://zenodo.org/badge/234105456.svg)](https://zenodo.org/badge/latestdoi/234105456)
-
 
 AGILE Online: https://agile-online.org/
 
