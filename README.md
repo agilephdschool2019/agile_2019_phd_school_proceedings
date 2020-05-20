@@ -25,7 +25,7 @@ See the instructions at the end of the [`Dockerfile`](Dockerfile) on how to use 
 
 The creation process is archived on Zenodo:
 
-[![DOI](https://zenodo.org/badge/234105456.svg)](https://zenodo.org/badge/latestdoi/234105456)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.33784141.svg)](https://doi.org/10.5281/zenodo.3784141)
 
 ## License
 
