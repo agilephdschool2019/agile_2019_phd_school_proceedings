@@ -1,6 +1,8 @@
 # AGILE PhD School 2019 Proceedings
 
-[![DOI](https://zenodo.org/badge/234105456.svg)](https://zenodo.org/badge/latestdoi/234105456)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3835767.svg)](https://doi.org/10.5281/zenodo.3835767)
+
+Workshop website: https://agilephdschool2019.github.io/
 
 AGILE Online: https://agile-online.org/
 
@@ -20,6 +22,10 @@ See file `agile_2019_phd_school_proceedings.Rmd` for the process of creating the
 
 This repository contains a `Dockerfile` defining the computing environment needed to run the whole proceedings process.
 See the instructions at the end of the [`Dockerfile`](Dockerfile) on how to use it.
+
+The creation process is archived on Zenodo:
+
+[![DOI](https://zenodo.org/badge/234105456.svg)](https://zenodo.org/badge/latestdoi/234105456)
 
 ## License
 
