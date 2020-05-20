@@ -1,0 +1,94 @@
+---
+title: "Create CEUR-WS proceedings"
+author: "Daniel Nüst"
+date: "`r Sys.time()`"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+Based on **http://ceur-ws.org/HOWTOSUBMIT.html**
+
+## Prepare files
+
+See `/articles` for the PDFs of the articles.
+Copy them into a folder `/submission/ceur-ws`.
+
+## Generate the table of contents
+
+1. Install [`ceur-make`](https://github.com/ceurws/ceur-make)
+  - On Ubuntu install `libsaxonhe-java` and find the location of the `.jar` file with `dpkg -L libsaxonhe-java` (or get the JAR from somewhere else)
+  - Create the submission files from the directory of `ceur-make`, using
+  
+    `./ceur-make-init ~/git/agile_2019_phd_school_proceedings/submission`
+  - Adjust `Makefile.vars` with path to SAXON HE
+3. Enter all information in `submission/workshop.xml` _manually_
+3. Enter all information in `submission/toc.xml` _with the script below_
+```{r toc}
+suppressPackageStartupMessages(library("glue"))
+
+author_template <- '<author>{author}</author>'
+paper_template <- '<paper id="{id}">
+      <title>{title}</title>
+      <authors>
+        {authors}
+      </authors>
+  </paper>'
+
+generate_toc_entry <- function(article) {
+  article_yaml <- rmarkdown:::yaml_front_matter(file.path(article$path, article$rmd_file))
+  authors <- paste0(glue::glue_data(
+                         list(author = sapply(article_yaml$author,
+                                              function(a) { a$name })),
+                         author_template),
+                    collapse = "\n      ")
+  glue::glue_data(list(title = article_yaml$title,
+                       id = article$id,
+                       authors = authors),
+                  paper_template)
+}
+
+tocs <- c()
+for (i in 1:nrow(articles)) {
+  tocs <- c(tocs, generate_toc_entry(article = articles[i,]))
+}
+
+toc_file <- file("submission/toc.xml")
+writeLines(c("<toc>",
+             tocs,
+             "</toc>"),
+           con = toc_file)
+close(toc_file)
+```
+3. Create submission in submission directory with `ceur-make`
+
+```{bash ceur-make}
+cd submission
+make ceur-ws/index.html ceur-ws/temp.bib
+mv ceur-ws/temp.bib ceur-ws/AGILEPHD2019.bib
+```
+
+## Prepare the submission file
+
+1. Double check `submission/ceur-ws/index.html` and `submission/ceur-ws/AGILEPHD2019.bib`
+2. HTML Validation: _"You can check the consistency/completeness of the submission directory by accessing it locally with your Web browser, and we require you to validate it using [the W3C Validator](https://validator.w3.org/nu). If you use RDFa tags, we ask you to validate your RDFa by using [the W3C RDFa parser](http://www.w3.org/2012/pyRdfa/)."_
+
+**Note:** If you make any changes in the directory `submission/ceur-ws`, you must manually recreate the ZIP file!
+
+```{r zipfile}
+submission_file <- here::here("submission/agilephd2019.zip")
+file.remove(submission_file)
+zip(zipfile = submission_file, files = "submission/ceur-ws")
+```
+
+## Submit with the "Upload (Procedure PUT)"
+
+1. Check http://ceur-ws.org/HOWTOSUBMIT.html#TOPERRORS
+1. Create a release tag, https://github.com/agilephdschool2019/agile_2019_phd_school_proceedings/releases
+3. Upload the submission ZIP `r ` to some public share
+4. Upload a ZIP with the signed agreements to some public share
+4. Send the link to the submission archive to CEUR [via Email](ceurws@sunsite.informatik.rwth-aachen.de)
+  - Subject: `CEURWS submission: AGILE PhD School 2019`
+  - Content:
+    - URLs of the aforementioned ZIP files
+    - Your contact details
